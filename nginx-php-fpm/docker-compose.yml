@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+  nginx-php-fpm:
+    image: richarvey/nginx-php-fpm:latest
+    restart: always
+    environment:
+      GIT_REPO: 'https://github.com/gshn/cpfs.git'
+      WEBROOT: '/var/www/html/public'
+    ports:
+      - "80:80"
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1231
+    ports:
+      - "3306:3306"
+    volumes:
+      - C:/Program Files/MariaDB 10.2/data:/var/lib/mysql
+  redis:
+    image: 'bitnami/redis:latest'
+    restart: always
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - C:/home:/bitnami

@@ -9,7 +9,7 @@ FROM gshn/ubuntu:16.04
 ENV DOMAIN domain.com
 ENV DBROOTPASS dbrootpass
 ENV PHPVERSION 7.2
-ENV PHPMYADMIN_VERSION 4.7.7
+ENV PHPMYADMIN_VERSION 4.8.0.1
 ENV PHPMYADMIN_DIRECTORY phpMyAdmin
 ENV USERID userid
 ENV USERPW userpw
@@ -24,7 +24,7 @@ RUN sed -i "s/^exit 101$/exit 0/" /usr/sbin/policy-rc.d
 RUN apt-get -y install software-properties-common && \
     echo "deb http://nginx.org/packages/mainline/ubuntu/ xenial nginx" >> /etc/apt/sources.list && \
     echo "deb-src http://nginx.org/packages/mainline/ubuntu/ xenial nginx" >> /etc/apt/sources.list && \
-    echo "deb http://ftp.kaist.ac.kr/mariadb/repo/10.2/ubuntu xenial main" >> /etc/apt/sources.list && \
+    echo "deb-src http://sgp1.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu xenial main" >> /etc/apt/sources.list && \
     wget http://nginx.org/keys/nginx_signing.key && \
     apt-key add nginx_signing.key && \
     rm nginx_signing.key && \
@@ -41,11 +41,10 @@ RUN apt-get -y install php$PHPVERSION-fpm php$PHPVERSION-intl php$PHPVERSION-gd 
     sed -i 's/;emergency_restart_interval = 0/emergency_restart_interval = 1m/' /etc/php/$PHPVERSION/fpm/php-fpm.conf
 
 ## mariaDB 설치
-RUN echo mariadb-server-10.2 mysql-server/root_password password $DBROOTPASS | debconf-set-selections && \
-    echo mariadb-server-10.2 mysql-server/root_password_again password $DBROOTPASS | debconf-set-selections && \
-    apt-get -y install mariadb-server-10.2 mariadb-client-10.2 && \
+RUN echo mariadb-server mysql-server/root_password password $DBROOTPASS | debconf-set-selections && \
+    echo mariadb-server mysql-server/root_password_again password $DBROOTPASS | debconf-set-selections && \
+    apt-get -y install mariadb-server mariadb-client && \
     apt-get -y install php$PHPVERSION-mysql
-
 
 ## mariaDB 설정
 RUN echo "[client]\
